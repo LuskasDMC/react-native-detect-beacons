@@ -27,6 +27,8 @@ const startBeaconsDetection = async () => {
       'Nova Era - Supermercados',
       'c6beff2c-2f22-4c12-a605-3aecea8cc5d5',
     );
+
+    Beacons.setForegroundScanPeriod(3000);
     console.log('Beacons ranging started succesfully!');
   } catch (err) {
     console.log(`Beacons ranging not started, error: ${err}`);
@@ -39,7 +41,7 @@ const App = () => {
   const [beaconData, setBeaconData] = useState({});
 
   useEffect(() => {
-    (async () => {
+    (() => {
       requestBluetothPermission();
       startBeaconsDetection();
 
@@ -51,10 +53,8 @@ const App = () => {
         }
       }, true);
 
-      const isSupported = await Beacons.checkTransmissionSupported();
-      Beacons.setForegroundScanPeriod(3000);
       DeviceEventEmitter.addListener('beaconsDidRange', (data) => {
-        if (data.beacons.length) {
+        if (data.beacons?.length) {
           setConnected(BEACON_STATUS.CONNECTED);
         } else {
           setConnected(BEACON_STATUS.DISCONNECTED);
@@ -104,12 +104,6 @@ const App = () => {
               keyExtractor={(item, index) => index}
             />
           </ContainerBeaconsDetecteds>
-
-          {/* {beaconData.beacons?.map((el) => (
-            <Text>
-              UUID: {el.uuid} | Minor: {el.major} | Minor: {el.minor}
-            </Text>
-          ))} */}
         </Content>
       </Container>
     </>
