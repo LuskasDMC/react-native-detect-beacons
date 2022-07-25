@@ -19,20 +19,17 @@ const BLUETOOTH_STATUS = {
   DISABLED: 'DESABILITADO',
 };
 
-const startBeaconsDetection = async () => {
+const REGION = {
+  identifier: 'Nova Era - Supermercados',
+  uuid: 'c6beff2c-2f22-4c12-a605-3aecea8cc5d5',
+};
+
+const startBeaconsDetection = () => {
   Beacons.detectIBeacons();
-
-  try {
-    await Beacons.startRangingBeaconsInRegion(
-      'Nova Era - Supermercados',
-      'c6beff2c-2f22-4c12-a605-3aecea8cc5d5',
-    );
-
-    Beacons.setForegroundScanPeriod(3000);
-    console.log('Beacons ranging started succesfully!');
-  } catch (err) {
-    console.log(`Beacons ranging not started, error: ${err}`);
-  }
+  Beacons.startRangingBeaconsInRegion(REGION.identifier, REGION.uuid)
+    .then(() => console.log('Beacons ranging started succesfully!'))
+    .catch((err) => console.log(`Beacons ranging not started, error: ${err}`));
+  Beacons.setForegroundScanPeriod(3000);
 };
 
 const App = () => {
@@ -89,8 +86,8 @@ const App = () => {
               {bluetooth}
             </Text>
           </Text>
-          <Text>Região: {beaconData.identifier || 'Não encontrado'}</Text>
-          <Text>UUID: {beaconData.uuid || 'Não encontrado'}</Text>
+          <Text>Região: {REGION.identifier || 'Não encontrado'}</Text>
+          <Text>UUID: {REGION.uuid || 'Não encontrado'}</Text>
 
           <ContainerBeaconsDetecteds>
             <Title style={{fontSize: 17}}>Beacons detectados:</Title>
@@ -98,7 +95,8 @@ const App = () => {
               data={beaconData.beacons}
               renderItem={({item, index}) => (
                 <Text>
-                  N°: {index} | Minor: {item.major} | Minor: {item.minor}
+                  N°: {index} | Proximidade: {item.proximity} | Precisão:{' '}
+                  {item.accuracy} | Minor: {item.major} | Minor: {item.minor}
                 </Text>
               )}
               keyExtractor={(item, index) => index}
